@@ -1,15 +1,21 @@
 from django.http import HttpResponse
+from django.db.models import F, Sum
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 
-from .models import Tag, Ingredient, Recipe, NumberOfIngredients, Favorite, ShoppingList
-from .serializers import TagSerializer, IngredientSerializer, RecipeListSerializer, NumberOfIngredientsSerializer, RecipeWriteSerializer, RecipeConciseSerializer, FavoriteSerializer, ShoppingListSerializer
+from .models import (
+    Tag, Ingredient, Recipe, NumberOfIngredients, Favorite, ShoppingList
+)
+from .serializers import (
+    TagSerializer, IngredientSerializer, RecipeListSerializer, 
+    NumberOfIngredientsSerializer, RecipeWriteSerializer, RecipeConciseSerializer, 
+    FavoriteSerializer, ShoppingListSerializer
+)
 from .permissions import IsOwnerOrReadOnly
 from .filters import IngredientSearchFilter, RecipeFilter
 
@@ -86,7 +92,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def download_shopping_cart(self, request):
         ingredients = NumberOfIngredients.objects.filter(
             recipe__shopping_lists__user=request.user).values(
-            'ingredient__name', 'ingredient__measure_unit', 'quantity'
+            F('ingredient__name'), F('ingredient__measure_unit')).annotate(Sum('quantity')
         )
         shopping_cart = '\n'.join([
             f'{ingredient["ingredient__name"]} - {ingredient["quantity"]} '

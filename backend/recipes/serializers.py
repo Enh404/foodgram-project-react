@@ -21,7 +21,7 @@ class NumberOfIngredientsSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
-        source='ingredient.measure_unit'
+        source='ingredient.measurement_unit'
     )
 
     class Meta:
@@ -87,8 +87,8 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'name', 'text', 'cooking_time'
         )
 
-    def validate(self, data):
-        ingredients = self.initial_data.get('ingredients')
+    def validate_ingredients(self, data):
+        ingredients = self.data.get('ingredients')
         if not ingredients:
             raise serializers.ValidationError({
                 'ingredients': 'Отсутствие ингредиентов в рецепте недопустимо!'
@@ -106,8 +106,9 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({
                     'quantity': 'Минимальное количество ингредиента: 1 шт!'
                 })
-
-        tags = self.initial_data.get('tags')
+    
+    def validate_tags(self, data):
+        tags = self.data.get('tags')
         if not tags:
             raise serializers.ValidationError({
                 'tags': 'Отсутствие тэгов в рецепте недопустимо!'
@@ -120,7 +121,8 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                 })
             tags_list.append(tag)
 
-        cooking_time = self.initial_data.get('cooking_time')
+    def validate_cooking_time(self, data):
+        cooking_time = self.data.get('cooking_time')
         if int(cooking_time) <= 0:
             raise serializers.ValidationError({
                 'cooking_time': 'Минимальное время приготовления: 1 минута!'
@@ -132,7 +134,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         for ingredient in ingredients:
             ingredient_id = ingredient['id']
             amount = ingredient['quantity']
-            NumberOfIngredients.objects.create(
+            NumberOfIngredients.objects.bulk_create(
                 recipe=recipe, ingredient=ingredient_id, amount=amount
             )
 
@@ -150,13 +152,6 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        instance.image = validated_data.get('image', instance.image)
-        instance.name = validated_data.get('name', instance.name)
-        instance.text = validated_data.get('text', instance.text)
-        instance.cooking_time = validated_data.get(
-            'cooking_time', instance.cooking_time
-        )
-
         instance.tags.clear()
         tags = validated_data.get('tags')
         self.create_tags(tags, instance)
@@ -165,8 +160,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         ingredients = validated_data.get('ingredients')
         self.create_ingredients(ingredients, instance)
 
-        instance.save()
-        return instance
+        return super().update(instance, validated_data)
 
     def to_representation(self, instance):
         request = self.context.get('request')
