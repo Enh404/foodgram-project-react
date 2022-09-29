@@ -41,12 +41,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
     pagination_class = PageNumberPagination
-    
+
     def get_serializer_class(self):
         if self.request.method in ['POST', 'PATCH']:
             return RecipeListSerializer
         return RecipeListSerializer
-    
+
     @action(detail=True, permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
@@ -66,7 +66,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
         favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
     @action(detail=True, permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
@@ -86,14 +86,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
         shopping_cart.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
     @action(detail=False, permission_classes=(IsAuthenticated,))
     def download_shopping_cart(self, request):
         ingredients = NumberOfIngredients.objects.filter(
             recipe__shopping_lists__user=request.user).values(
-            F('ingredient__name'), 
-            F('ingredient__measure_unit')).annotate(Sum('quantity')
-        )
+            F('ingredient__name'),
+            F('ingredient__measure_unit')).annotate(Sum('quantity'))
         shopping_cart = '\n'.join([
             f'{ingredient["ingredient__name"]} - {ingredient["quantity"]} '
             f'{ingredient["ingredient__measure_unit"]}'
