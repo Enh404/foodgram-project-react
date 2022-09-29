@@ -1,7 +1,9 @@
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
-from .models import Tag, Ingredient, Recipe, NumberOfIngredients, Favorite, ShoppingList
+from .models import (
+    Tag, Ingredient, Recipe, NumberOfIngredients, Favorite, ShoppingList
+)
 from users.serializers import CustomUserSerializer
 
 
@@ -106,7 +108,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({
                     'quantity': 'Минимальное количество ингредиента: 1 шт!'
                 })
-    
+
     def validate_tags(self, data):
         tags = data['tags']
         if not tags:

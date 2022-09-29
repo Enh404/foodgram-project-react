@@ -12,8 +12,7 @@ from .models import (
     Tag, Ingredient, Recipe, NumberOfIngredients, Favorite, ShoppingList
 )
 from .serializers import (
-    TagSerializer, IngredientSerializer, RecipeListSerializer, 
-    NumberOfIngredientsSerializer, RecipeWriteSerializer, RecipeConciseSerializer, 
+    TagSerializer, IngredientSerializer, RecipeListSerializer,
     FavoriteSerializer, ShoppingListSerializer
 )
 from .permissions import IsOwnerOrReadOnly
@@ -92,7 +91,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def download_shopping_cart(self, request):
         ingredients = NumberOfIngredients.objects.filter(
             recipe__shopping_lists__user=request.user).values(
-            F('ingredient__name'), F('ingredient__measure_unit')).annotate(Sum('quantity')
+            F('ingredient__name'), 
+            F('ingredient__measure_unit')).annotate(Sum('quantity')
         )
         shopping_cart = '\n'.join([
             f'{ingredient["ingredient__name"]} - {ingredient["quantity"]} '
