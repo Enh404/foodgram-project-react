@@ -1,18 +1,9 @@
 ![example workflow](https://github.com/Enh404/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 # Описание проекта:
 
-Данный проект это API версия блога Yatube. Теперь, с помощью различных запросов к эндпойнтам (например в Postman) можно получать информацию, которая содержится на сайте.
+На этом сервисе пользователи смогут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
 
-В данном проекте используются такие запросы:
-- GET
-- POST 
-- PATCH 
-- PUT 
-- DELETE
-
-Работа выполнена с помощью библиотек Django и Django Rest Framework (*DRF*). Для обработки запросов к API применяются Вьюсеты (*viewset*), к каждому из них написаны Сериализаторы (*serializers*). Роутинг запросов реализован с помощью *DefaultRouter* - одного из инструментов DRF. Так же в проекте предусмотрена аутентификация по *JWT*-токену. Права доступа для различных видов запросов отличаются, например чтение постов разрешено всем, а изенение - только автору поста. Это все заслуга различных пермишенов (*permissions*). Для более удобного и гибкого поиска постов исползуется пагинация, основанная на классе *LimitOffsetPagination* и поисковый бэкенд *SearchFilter*.
-
-# Как запустить проект:
+# Запуск проекта:
 
 Установить и настроить Docker, с помощью официальной документации:
 
@@ -20,7 +11,7 @@ https://docs.docker.com/
 
 Клонировать репозиторий:
 
-`git clone git@github.com:Enh404/yamdb_final.git`
+`git clone git@github.com:Enh404/foodgram-project-react.git`
 
 Заполнить _.env-файл_:
 
@@ -40,7 +31,7 @@ https://docs.docker.com/
 
  Перейти в директорию с _docker-compose_:
 
-`cd yamdb_final/infra`
+`cd foodgram-project-react/infra`
 
 Развернуть проект, запустив _docker-compose_:
 
@@ -48,15 +39,15 @@ https://docs.docker.com/
 
 Выполнить миграции:
 
-`docker-compose exec web python manage.py migrate`
+`docker-compose exec backend python manage.py migrate`
 
 Создать суперпользователя:
 
-`docker-compose exec web python manage.py createsuperuser`
+`docker-compose exec backend python manage.py createsuperuser`
 
 Собрать статику:
 
-`docker-compose exec web python manage.py collectstatic --no-input`
+`docker-compose exec backend python manage.py collectstatic --no-input`
 
 Если потребуется остановить проект:
 
