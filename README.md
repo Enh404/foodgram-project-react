@@ -1,4 +1,4 @@
-![example workflow](https://github.com/Enh404/yamdb_final/actions/workflows/yamdb_workflow.yml/badge.svg)
+![example workflow](https://github.com/Enh404/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 # Описание проекта:
 
 Данный проект это API версия блога Yatube. Теперь, с помощью различных запросов к эндпойнтам (например в Postman) можно получать информацию, которая содержится на сайте.
