@@ -43,9 +43,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
 
     def get_serializer_class(self):
-        if self.request.method in ['POST', 'PATCH']:
+        if self.action in ('list', 'retrieve'):
             return RecipeListSerializer
-        return RecipeListSerializer
+        return RecipeWriteSerializer
 
     @action(detail=True, permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk):
