@@ -1,5 +1,5 @@
 # public ip:
-# 158.160.6.52
+# 51.250.109.167
 name: Django-app workflow
 
 on: [push]
