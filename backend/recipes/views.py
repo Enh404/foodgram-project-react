@@ -12,7 +12,7 @@ from .models import (
     Tag, Ingredient, Recipe, NumberOfIngredients, Favorite, ShoppingList
 )
 from .serializers import (
-    TagSerializer, IngredientSerializer, RecipeListSerializer, 
+    TagSerializer, IngredientSerializer, RecipeListSerializer,
     RecipeWriteSerializer, FavoriteSerializer, ShoppingListSerializer
 )
 from .permissions import IsOwnerOrReadOnly
