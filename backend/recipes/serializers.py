@@ -68,11 +68,11 @@ class IngredientWriteSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all()
     )
-    amount = serializers.IntegerField()
+    quantity = serializers.IntegerField()
 
     class Meta:
         model = NumberOfIngredients
-        fields = ('id', 'amount')
+        fields = ('id', 'quantity')
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
@@ -107,7 +107,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             amount = ingredient['quantity']
             if int(amount) <= 0:
                 raise serializers.ValidationError({
-                    'quantity': 'Минимальное количество ингредиента: 1 шт!'
+                    'amount': 'Минимальное количество ингредиента: 1 шт!'
                 })
 
     def validate_tags(self, data):
@@ -156,13 +156,9 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.tags.clear()
-        tags = validated_data.get('tags')
-        self.create_tags(tags, instance)
-
-        NumberOfIngredients.objects.filter(recipe=instance).all().delete()
-        ingredients = validated_data.get('ingredients')
-        self.create_ingredients(ingredients, instance)
-
+        NumberOfIngredients.objects.filter(recipe=instance).delete()
+        self.create_tags(validated_data.pop('tags'), instance)
+        self.create_ingredients(validated_data.pop('ingredients'), instance)
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):

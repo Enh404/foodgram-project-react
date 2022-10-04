@@ -16,6 +16,7 @@ from .serializers import (
     RecipeWriteSerializer, FavoriteSerializer, ShoppingListSerializer
 )
 from .permissions import IsOwnerOrReadOnly
+from .pagination import CustomPageNumberPagination
 from .filters import IngredientSearchFilter, RecipeFilter
 
 
@@ -40,7 +41,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = (IsOwnerOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
-    pagination_class = PageNumberPagination
+    pagination_class = CustomPageNumberPagination
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
@@ -92,10 +93,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ingredients = NumberOfIngredients.objects.filter(
             recipe__shopping_lists__user=request.user).values(
             F('ingredient__name'),
-            F('ingredient__measure_unit')).annotate(Sum('quantity'))
+            F('ingredient__measurement_unit')).annotate(Sum('quantity'))
         shopping_cart = '\n'.join([
             f'{ingredient["ingredient__name"]} - {ingredient["quantity"]} '
-            f'{ingredient["ingredient__measure_unit"]}'
+            f'{ingredient["ingredient__measurement_unit"]}'
             for ingredient in ingredients
         ])
         filename = 'shopping_cart.txt'
