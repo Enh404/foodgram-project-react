@@ -47,7 +47,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return RecipeListSerializer
         return RecipeWriteSerializer
 
-    @action(detail=True, permission_classes=(IsAuthenticated,))
+    @action(detail=True, methods=["POST"], 
+        permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
         serializer = FavoriteSerializer(
@@ -67,7 +68,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=True, permission_classes=(IsAuthenticated,))
+    @action(detail=True, methods=["POST"], 
+        permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
         serializer = ShoppingListSerializer(
@@ -87,7 +89,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         shopping_cart.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=False, permission_classes=(IsAuthenticated,))
+    @action(detail=False, methods=['get'], 
+        permission_classes=(IsAuthenticated,))
     def download_shopping_cart(self, request):
         ingredients = NumberOfIngredients.objects.filter(
             recipe__shopping_lists__user=request.user).values(
