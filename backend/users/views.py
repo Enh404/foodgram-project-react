@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 
 from recipes.pagination import CustomPageNumberPagination
 from .models import Follow, User
-from .serializers import FollowListSerializer, FollowSerializer, CustomUserSerializer
+from .serializers import FollowSerializer, CustomUserSerializer
 
 
 class CustomUserViewSet(UserViewSet):
@@ -45,7 +45,10 @@ class FollowApiView(APIView):
             following_id=user_id
         )
         return Response(
-            self.serializer_class(following, context={'request': request}).data,
+            self.serializer_class(
+                following,
+                context={'request': request}
+            ).data,
             status=status.HTTP_201_CREATED
         )
 
