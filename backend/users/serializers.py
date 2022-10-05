@@ -3,7 +3,6 @@ from recipes.models import Recipe
 from rest_framework import serializers
 
 from .models import Follow, User
-from recipes.serializers import RecipeConciseSerializer
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -51,10 +50,10 @@ class CustomUserSerializer(UserSerializer):
         return Follow.objects.filter(user=user, author=obj.id).exists()
 
 
-# class RecipeConciseSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Recipe
-#         fields = ('id', 'name', 'image', 'cooking_time')
+class RecipeConciseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class FollowSerializer(CustomUserSerializer):
