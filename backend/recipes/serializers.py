@@ -29,7 +29,7 @@ class NumberOfIngredientsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = NumberOfIngredients
-        fields = ('id', 'name', 'measurement_unit', 'quantity')
+        fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
 class RecipeListSerializer(serializers.ModelSerializer):
@@ -68,11 +68,11 @@ class IngredientWriteSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all()
     )
-    quantity = serializers.IntegerField()
+    amount = serializers.IntegerField()
 
     class Meta:
         model = NumberOfIngredients
-        fields = ('id', 'quantity')
+        fields = ('id', 'amount')
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
@@ -90,12 +90,8 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'name', 'text', 'cooking_time'
         )
 
-    def validate_ingredients(self, data):
-        ingredients = data
-        if not ingredients:
-            raise serializers.ValidationError({
-                'ingredients': 'Отсутствие ингредиентов в рецепте недопустимо!'
-            })
+    def validate(self, data):
+        ingredients = data['ingredients']
         ingredients_list = []
         for ingredient in ingredients:
             ingredient_id = ingredient['id']
@@ -104,14 +100,13 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                     'ingredients': 'Ингредиенты не должны повторяться!'
                 })
             ingredients_list.append(ingredient_id)
-            amount = ingredient['quantity']
+            amount = ingredient['amount']
             if int(amount) <= 0:
                 raise serializers.ValidationError({
                     'amount': 'Минимальное количество ингредиента: 1 шт!'
                 })
 
-    def validate_tags(self, data):
-        tags = data
+        tags = data['tags']
         if not tags:
             raise serializers.ValidationError({
                 'tags': 'Отсутствие тэгов в рецепте недопустимо!'
@@ -124,19 +119,17 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                 })
             tags_list.append(tag)
 
-    def validate_cooking_time(self, data):
-        cooking_time = data
+        cooking_time = data['cooking_time']
         if int(cooking_time) <= 0:
             raise serializers.ValidationError({
                 'cooking_time': 'Минимальное время приготовления: 1 минута!'
             })
-
         return data
 
     def create_ingredients(self, ingredients, recipe):
         for ingredient in ingredients:
             ingredient_id = ingredient['id']
-            amount = ingredient['quantity']
+            amount = ingredient['amount']
             NumberOfIngredients.objects.bulk_create(
                 recipe=recipe, ingredient=ingredient_id, amount=amount
             )

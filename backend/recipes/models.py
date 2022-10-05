@@ -78,7 +78,7 @@ class NumberOfIngredients(models.Model):
     recipe = models.ForeignKey(
         Recipe, on_delete=models.CASCADE
     )
-    quantity = models.PositiveSmallIntegerField(
+    amount = models.PositiveSmallIntegerField(
         validators=[
             MinValueValidator(1, message='Количество должно быть больше 0!')
         ]
@@ -132,7 +132,7 @@ class ShoppingList(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
-                name='unique_recipe_in_shopping_list'
+                name='unique_shopping_list'
             )
         ]
         verbose_name = 'Список покупок'
