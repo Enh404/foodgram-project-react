@@ -49,6 +49,10 @@ https://docs.docker.com/
 
 `docker-compose exec backend python manage.py collectstatic --no-input`
 
+Загрузить базу данных с ингредиентами:
+
+`sudo docker-compose exec backend python manage.py loaddata data/ingredients.json`
+
 Если потребуется остановить проект:
 
 `docker-compose down -v`
